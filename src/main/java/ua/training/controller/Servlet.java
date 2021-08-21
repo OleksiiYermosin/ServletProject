@@ -2,6 +2,8 @@ package ua.training.controller;
 
 import ua.training.controller.commands.Command;
 import ua.training.controller.commands.LoginCommand;
+import ua.training.controller.commands.RegistrationCommand;
+import ua.training.model.services.UserService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,6 +24,7 @@ public class Servlet extends HttpServlet {
         servletConfig.getServletContext()
                 .setAttribute("loggedUsers", new HashSet<String>());
         commands.put("login", new LoginCommand());
+        commands.put("registration", new RegistrationCommand(new UserService()));
         /*commands.put("logout",
                 new LogOutCommand());
         commands.put("login",

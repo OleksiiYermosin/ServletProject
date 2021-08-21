@@ -17,12 +17,12 @@ public class CommandUtility {
     }*/
 
     @SuppressWarnings("unchecked")
-    static boolean checkUserIsLogged(HttpServletRequest request, String userName){
+    static boolean checkUserIsLogged(HttpServletRequest request, String username){
         Set<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
-        if(loggedUsers.stream().anyMatch(userName::equals)){
+        if(loggedUsers.stream().anyMatch(username::equals)){
             return true;
         }
-        loggedUsers.add(userName);
+        loggedUsers.add(username);
         request.getSession().getServletContext().setAttribute("loggedUsers", loggedUsers);
         return false;
     }
