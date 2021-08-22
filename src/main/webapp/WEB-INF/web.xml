@@ -12,12 +12,12 @@
     </servlet-mapping>
 
     <filter>
-      <filter-name>EncodingFilter</filter-name>
-      <filter-class>ua.training.controller.filters.EncodingFilter</filter-class>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>ua.training.controller.filters.EncodingFilter</filter-class>
     </filter>
     <filter-mapping>
-      <filter-name>EncodingFilter</filter-name>
-      <url-pattern>/*</url-pattern>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter>
         <filter-name>LocaleFilter</filter-name>
@@ -27,14 +27,26 @@
         <filter-name>LocaleFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <!--<filter>
-      <filter-name>AuthFilter</filter-name>
-      <filter-class>org.itstep.controller.filters.AuthFilter</filter-class>
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>ua.training.controller.filters.AuthFilter</filter-class>
     </filter>
     <filter-mapping>
-      <filter-name>AuthFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-    </filter-mapping>-->
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/service/login</url-pattern>
+        <url-pattern>/service/register</url-pattern>
+        <url-pattern>/service/logout</url-pattern>
+        <url-pattern>/service/user/*</url-pattern>
+        <url-pattern>/service/admin/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>UserFilter</filter-name>
+        <filter-class>ua.training.controller.filters.UserFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>UserFilter</filter-name>
+        <url-pattern>/service/user/*</url-pattern>
+    </filter-mapping>
 
     <!--<listener>
       <listener-class>

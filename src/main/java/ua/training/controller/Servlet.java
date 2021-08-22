@@ -1,8 +1,6 @@
 package ua.training.controller;
 
-import ua.training.controller.commands.Command;
-import ua.training.controller.commands.LoginCommand;
-import ua.training.controller.commands.RegistrationCommand;
+import ua.training.controller.commands.*;
 import ua.training.model.services.UserService;
 
 import javax.servlet.ServletConfig;
@@ -17,39 +15,31 @@ import java.util.Map;
 
 public class Servlet extends HttpServlet {
 
-    private Map<String, Command> commands = new HashMap<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
     public void init(ServletConfig servletConfig){
-
-        servletConfig.getServletContext()
-                .setAttribute("loggedUsers", new HashSet<String>());
-        commands.put("login", new LoginCommand());
-        commands.put("registration", new RegistrationCommand(new UserService()));
-        /*commands.put("logout",
-                new LogOutCommand());
-        commands.put("login",
-                new LoginCommand());
-        commands.put("exception" , new ExceptionCommand());*/
+        servletConfig.getServletContext().setAttribute("loggedUsers", new HashSet<String>());
+        UserService userService = new UserService();
+        commands.put("login", new LoginCommand(userService));
+        commands.put("registration", new RegistrationCommand(userService));
+        commands.put("logout", new LogOutCommand());
+        commands.put("user", new AfterLoginCommand());
+        commands.put("admin", new AfterLoginCommand());
+        commands.put("index", new LoadInitialPageCommand());
     }
 
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response)
-            throws IOException, ServletException {
-        processRequest(request, response);
-        //response.getWriter().print("Hello from servlet");
-    }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         processRequest(request, response);
     }
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        processRequest(request, response);
+    }
+
+    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getRequestURI();
         path = path.replaceAll(".*/service/" , "");
-        Command command = commands.getOrDefault(path, (r)->"common/main.jsp");
-        System.out.println(command.getClass().getName());
+        Command command = commands.getOrDefault(path, (r) -> "redirect:/index");
         String page = command.execute(request);
         if(page.contains("redirect:")){
             response.sendRedirect(page.replace("redirect:", "/service"));

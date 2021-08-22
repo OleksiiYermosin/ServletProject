@@ -17,7 +17,7 @@
 <jsp:include page="header.jsp" />
 <div class="content">
     <form method="post" action="${pageContext.request.contextPath}/service/login" class="dataForm">
-        <c:if test = "${sessionScope.loginError != null && sessionScope.loginError == true}">
+        <c:if test = "${requestScope.loginError != null && requestScope.loginError == true}">
             <p  class="form-element" style="margin-top: 10%"><fmt:message key="login.wrong.values" /></p>
         </c:if>
         <label class="form-element" style="margin-top: 10%" for="username"><fmt:message key="username.prompt.value" /></label>

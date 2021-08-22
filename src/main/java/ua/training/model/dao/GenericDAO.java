@@ -1,9 +1,10 @@
 package ua.training.model.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface GenericDAO<T> extends AutoCloseable {
-    void create(T entity);
+    boolean create(T entity);
     T findById(int id);
     List<T> findAll();
     void update(T entity);

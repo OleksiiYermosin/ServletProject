@@ -1,8 +1,6 @@
 package ua.training.controller.commands;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +16,7 @@ public class CommandUtility {
 
     @SuppressWarnings("unchecked")
     static boolean checkUserIsLogged(HttpServletRequest request, String username){
-        Set<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
+        Set<String> loggedUsers = (HashSet<String>) request.getServletContext().getAttribute("loggedUsers");
         if(loggedUsers.stream().anyMatch(username::equals)){
             return true;
         }

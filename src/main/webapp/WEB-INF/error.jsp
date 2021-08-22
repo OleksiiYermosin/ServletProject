@@ -21,6 +21,12 @@
         <div class="container">
             <div class="content-container">
                 <p class="form-element"><fmt:message key="error.common.message"/></p>
+                <c:if test = "${requestScope.isAlreadyExist != null && requestScope.isAlreadyExist}">
+                    <p class="form-element"><fmt:message key="username.duplicate.message"/></p>
+                </c:if>
+                <c:if test = "${requestScope.isAlreadyLogged != null && requestScope.isAlreadyLogged}">
+                    <p class="form-element"><fmt:message key="user.is.already.logged.message"/></p>
+                </c:if>
             </div>
         </div>
     </div>

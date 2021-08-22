@@ -17,21 +17,19 @@
 <jsp:include page="header.jsp" />
 <div class="content">
         <form method="post" action="${pageContext.request.contextPath}/service/registration" class="dataForm">
+            <c:if test = "${requestScope.isValidationFailed != null && requestScope.isValidationFailed}">
+                <p style="margin-top: 10%" class="form-element"><fmt:message key="incorrect.registration.values.message" /></p>
+            </c:if>
             <label style="margin-top: 10%" for="name"><fmt:message key="name.prompt.value" /></label>
             <input name="name" class="form-element" type="text" id="name" required>
-            <%--<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="form-element"></p>--%>
             <label class="form-element" for="surname"><fmt:message key="surname.prompt.value" /></label>
             <input name="surname" class="form-element" type="text" id="surname" required>
-           <%-- <p th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" class="form-element"></p>--%>
             <label class="form-element" for="username"><fmt:message key="username.prompt.value" /></label>
             <input name="username" class="form-element" type="text" id="username" required>
-            <%--<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="form-element"></p>--%>
             <label class="form-element" for="phone"><fmt:message key="phone.prompt.value" /></label>
             <input name="phone" class="form-element" type="text" id="phone" required>
-            <%--<p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="form-element"></p>--%>
             <label class="form-element" for="password"><fmt:message key="password.prompt.value" /></label>
             <input name="password" class="form-element" type="text" id="password" required>
-            <%--<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="form-element"></p>--%>
             <button style="margin-bottom: 10%" type="submit" class="btn btn-success"><fmt:message key="register.value" /></button>
         </form>
 </div>

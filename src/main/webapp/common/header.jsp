@@ -16,9 +16,13 @@
                 </p>
             </a>
             <div style="display: flex" class="text-end">
-                <a href="${pageContext.request.contextPath}/service/login" class="btn btn-warning me-2"><fmt:message key="header.login.value" /></a>
-                <a href="/service/registration" class="btn btn-warning me-4"><fmt:message key="header.signUp.value" /></a>
-                <a href="/logout" class="btn btn-warning me-4"><fmt:message key="header.logout.value" /></a>
+                <c:if test = "${sessionScope.user == null}">
+                    <a href="${pageContext.request.contextPath}/service/login" class="btn btn-warning me-2"><fmt:message key="header.login.value" /></a>
+                    <a href="${pageContext.request.contextPath}/service/registration" class="btn btn-warning me-4"><fmt:message key="header.signUp.value" /></a>
+                </c:if>
+                <c:if test = "${sessionScope.user != null}">
+                    <a href="/service/logout" class="btn btn-warning me-4"><fmt:message key="header.logout.value" /></a>
+                </c:if>
                 <div>
                     <a class="btn btn-warning me-2" href="?locale=en">ENG</a>
                     <a class="btn btn-warning" href="?locale=ua">UA</a>

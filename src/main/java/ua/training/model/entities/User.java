@@ -20,7 +20,7 @@ public class User {
 
     private String password;
 
-    private Role role;
+    private Long roleId;
 
     public User() {
     }
@@ -97,12 +97,12 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Long getRole() {
+        return roleId;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(Long roleId) {
+        this.roleId = roleId;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class User {
                 ", balance=" + balance +
                 ", discount=" + discount +
                 ", password='" + password + '\'' +
-                ", role=" + role +
+                ", role=" + roleId +
                 '}';
     }
 }
