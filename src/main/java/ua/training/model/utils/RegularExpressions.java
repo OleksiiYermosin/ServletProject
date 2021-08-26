@@ -10,4 +10,6 @@ public interface RegularExpressions {
 
     String PHONE_REGEX = "\\+?[0-9]{12}|[0-9]{10}";
 
+    String VALUE_REGEX = "[1-9][0-9]{0,3}|[1-9][0-9]{0,3}\\.[0-9]{1,2}";
+
 }

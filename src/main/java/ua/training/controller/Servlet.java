@@ -1,6 +1,9 @@
 package ua.training.controller;
 
 import ua.training.controller.commands.*;
+import ua.training.model.services.CalculationService;
+import ua.training.model.services.OrderService;
+import ua.training.model.services.TaxiService;
 import ua.training.model.services.UserService;
 
 import javax.servlet.ServletConfig;
@@ -20,12 +23,20 @@ public class Servlet extends HttpServlet {
     public void init(ServletConfig servletConfig){
         servletConfig.getServletContext().setAttribute("loggedUsers", new HashSet<String>());
         UserService userService = new UserService();
+        TaxiService taxiService = new TaxiService();
+        OrderService orderService = new OrderService(new CalculationService(), userService, taxiService);
         commands.put("login", new LoginCommand(userService));
         commands.put("registration", new RegistrationCommand(userService));
         commands.put("logout", new LogOutCommand());
-        commands.put("user", new AfterLoginCommand());
-        commands.put("admin", new AfterLoginCommand());
-        commands.put("index", new LoadInitialPageCommand());
+        commands.put("user", new LoadDefaultPageCommand(userService));
+        commands.put("user/recharge-balance", new RechargeBalanceCommand(userService));
+        commands.put("user/order-taxi", new BookTaxiCommand(taxiService, orderService));
+        commands.put("user/order-taxi/view-new-order", new ViewOrdersCommand());
+        commands.put("user/order-taxi/new-order", new ApproveOrderCommand(orderService));
+        commands.put("user/order-taxi/cancel-order", new DeclineOrderCommand());
+        commands.put("user/orders", new ViewAllOrdersCommand(orderService));
+        commands.put("admin", new LoadDefaultPageCommand(userService));
+        commands.put("index", new LoadDefaultPageCommand(userService));
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

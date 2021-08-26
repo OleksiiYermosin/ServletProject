@@ -1,6 +1,7 @@
 package ua.training.controller.commands;
 
 
+import ua.training.model.dao.impl.ConnectionManager;
 import ua.training.model.entities.User;
 import ua.training.model.services.UserService;
 
@@ -40,12 +41,11 @@ public class RegistrationCommand implements Command {
             request.setAttribute("isValidationFailed", true);
             return "/common/registration.jsp";
         }
-        if (userService.saveUser(user)) {
+        if (userService.saveUser(user, ConnectionManager.getConnection(), true)) {
             return "redirect:/service/login";
-        } else {
-            request.setAttribute("isAlreadyExist", true);
-            return "/WEB-INF/error.jsp";
         }
+        request.setAttribute("isAlreadyExist", true);
+        return "/WEB-INF/error.jsp";
 
     }
 

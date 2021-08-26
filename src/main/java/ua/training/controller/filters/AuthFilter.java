@@ -1,14 +1,18 @@
 package ua.training.controller.filters;
 
+import ua.training.model.dao.impl.ConnectionManager;
 import ua.training.model.entities.User;
+import ua.training.model.services.UserService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Arrays;
 
 public class AuthFilter implements Filter {
+
+    private final UserService userService = new UserService();
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
@@ -21,6 +25,10 @@ public class AuthFilter implements Filter {
         boolean isAllowedPages = Arrays.asList(pages).contains(requestURI);
         if ((userFromSession == null && !isAllowedPages) || (userFromSession != null && isAllowedPages)) {
             servletRequest.getRequestDispatcher("/WEB-INF/error.jsp").forward(servletRequest, servletResponse);
+        }
+        if(userFromSession != null){
+            User updatedUser = userService.findUserById(userFromSession.getId(), ConnectionManager.getConnection(), true);
+            ((HttpServletRequest) servletRequest).getSession().setAttribute("user", updatedUser);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

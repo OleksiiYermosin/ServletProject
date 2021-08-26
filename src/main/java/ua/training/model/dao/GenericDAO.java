@@ -1,13 +1,11 @@
 package ua.training.model.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
-public interface GenericDAO<T> extends AutoCloseable {
+public interface GenericDAO<T>{
     boolean create(T entity);
-    T findById(int id);
+    T findById(Long id);
     List<T> findAll();
-    void update(T entity);
-    void delete(int id);
-    void close();
+    boolean update(T entity);
+    void delete(Long id);
 }

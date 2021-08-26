@@ -1,5 +1,6 @@
 package ua.training.controller.commands;
 
+import ua.training.model.dao.impl.ConnectionManager;
 import ua.training.model.entities.User;
 import ua.training.model.services.UserService;
 
@@ -26,27 +27,24 @@ public class LoginCommand implements Command {
             request.setAttribute("loginError", true);
             return "/common/login.jsp";
         }
-        try {
-            User userFromDB = userService.findUserByUsername(username);
-            if (!userFromDB.getPassword().equals(pass)){
-                request.setAttribute("loginError", true);
-                return "/common/login.jsp";
-            }
-            if (CommandUtility.checkUserIsLogged(request, userFromDB.getUsername())) {
-                throw new IllegalArgumentException();
-            }
-            request.getSession().setAttribute("user", userFromDB);
-            if (userFromDB.getRole() == 1L) {
-                return "redirect:/user";
-            } else {
-                //return "redirect:/WEB-INF/admins/admin.jsp";
-                System.out.println("Admin " + userFromDB.getUsername());
-            }
+        User userFromDB = userService.findUserByUsername(username, ConnectionManager.getConnection(), true);
+        if (!userFromDB.getPassword().equals(pass)) {
+            request.setAttribute("loginError", true);
             return "/common/login.jsp";
-        } catch (IllegalArgumentException exception) {
+        }
+        if (CommandUtility.checkUserIsLogged(request, userFromDB.getUsername())) {
             request.setAttribute("isAlreadyLogged", true);
             return "/WEB-INF/error.jsp";
         }
+        request.getSession().setAttribute("user", userFromDB);
+        if (userFromDB.getRole() == 1L) {
+            return "redirect:/user";
+        } else {
+            //return "redirect:/WEB-INF/admins/admin.jsp";
+            System.out.println("Admin " + userFromDB.getUsername());
+        }
+        return "/common/login.jsp";
+
     }
 
 }

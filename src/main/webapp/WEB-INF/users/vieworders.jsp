@@ -1,57 +1,37 @@
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
+<%@ page session="true" %>
+
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="res"/>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{title.orders}">Orders</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <title>
+        <fmt:message key="title.orders"/>
+    </title>
+    <link href="${pageContext.request.contextPath}/static/css/styles.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script th:src="@{/js/scripts.js}"></script>
+    <script src="${pageContext.request.contextPath}/static/js/scripts.js"></script>
 </head>
 <body>
-<header class="p-3 bg-dark text-white">
-    <div class="container">
-        <div style="display: flex; justify-content: space-between">
-            <a href="/" class="d-flex align-items-center mb-lg-0 text-white text-decoration-none">
-                <p th:text="#{header.service.name}" style="margin: 0; font-size: 24px; color: #ffc107"></p>
-            </a>
-            <div style="display: flex" class="text-end">
-                <a href="/logout" th:text="#{header.logout.value}" class="btn btn-warning me-4">Log out</a>
-                <form style="display: flex" method="get" th:action="${#httpServletRequest.requestURI}"
-                      id="lang-switcher">
-                    <button type="submit" class="btn btn-warning me-2" name="locale" value="ua">
-                        UA
-                    </button>
-                    <button type="submit" class="btn btn-warning" name="locale" value="en">
-                        ENG
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</header>
+<jsp:include page="../../common/header.jsp"/>
 <div class="content-holder">
-    <div class="side">
-        <div class="container">
-            <div class="side-content">
-                <p th:text="${user.getName() + ' ' + user.getSurname()}"
-                   style="font-size: 20px; font-weight: bold; margin-bottom: 0"></p>
-                <a th:href="@{/logout}" th:text="#{change.account.value}"></a>
-                <hr>
-                <a th:href="@{/user/}" th:text="#{personal.account.value}"></a>
-                <a th:href="@{/user/order-taxi}" th:text="#{order.taxi.value}"></a>
-                <a th:href="@{/user/order-taxi/view-new-order}" th:text="#{prepared.orders.value}"></a>
-                <a th:href="@{/user/orders}" th:text="#{view.orders.value}"></a>
-            </div>
-        </div>
-    </div>
+    <jsp:include page="sidebar.jsp"/>
     <div style="width: available" class="content">
         <div class="container">
             <div class="content-container">
                 <div class="main">
-                    <div th:if="${orders.isEmpty()==true}" style="display: flex; align-items: center; justify-content: center">
-                        <p th:text="#{orders.error.message}" style="font-size: 18px"></p>
-                    </div>
+                    <c:if test="${sessionScope.orders==null}">
+                        <div style="display: flex; align-items: center; justify-content: center">
+                            <p style="font-size: 18px">
+                                <fmt:message key="orders.error.message"/>
+                            </p>
+                        </div>
+                    </c:if>
                     <form th:action="@{/user/orders}" method="get" class="sorting-form">
                         <label for="sort" th:text="#{sort.message}" class="sorting-form-element"></label>
                         <select name="sort" id="sort" class="sorting-form-element" required>
