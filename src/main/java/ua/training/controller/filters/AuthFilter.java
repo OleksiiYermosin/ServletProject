@@ -24,6 +24,7 @@ public class AuthFilter implements Filter {
         String requestURI = ((HttpServletRequest) servletRequest).getRequestURI();
         boolean isAllowedPages = Arrays.asList(pages).contains(requestURI);
         if ((userFromSession == null && !isAllowedPages) || (userFromSession != null && isAllowedPages)) {
+            servletRequest.setAttribute("authError", true);
             servletRequest.getRequestDispatcher("/WEB-INF/error.jsp").forward(servletRequest, servletResponse);
         }
         if(userFromSession != null){

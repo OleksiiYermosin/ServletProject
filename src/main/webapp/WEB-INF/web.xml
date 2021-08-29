@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="4.0">
     <display-name>Archetype Created Web Application</display-name>
+
     <servlet>
         <servlet-name>Servlet</servlet-name>
         <servlet-class>ua.training.controller.Servlet</servlet-class>
-        <!--<load-on-startup>1</load-on-startup>-->
     </servlet>
     <servlet-mapping>
         <servlet-name>Servlet</servlet-name>
@@ -19,6 +19,7 @@
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter>
         <filter-name>LocaleFilter</filter-name>
         <filter-class>ua.training.controller.filters.LocaleFilter</filter-class>
@@ -27,6 +28,7 @@
         <filter-name>LocaleFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>ua.training.controller.filters.AuthFilter</filter-class>
@@ -39,6 +41,7 @@
         <url-pattern>/service/user/*</url-pattern>
         <url-pattern>/service/admin/*</url-pattern>
     </filter-mapping>
+
     <filter>
         <filter-name>UserFilter</filter-name>
         <filter-class>ua.training.controller.filters.UserFilter</filter-class>
@@ -48,19 +51,28 @@
         <url-pattern>/service/user/*</url-pattern>
     </filter-mapping>
 
-    <!--<listener>
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>ua.training.controller.filters.AdminFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/service/admin/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
       <listener-class>
-        org.itstep.controller.listener.SessionListener
+        ua.training.controller.listeners.SessionListener
       </listener-class>
-    </listener>-->
+    </listener>
 
     <welcome-file-list>
         <welcome-file>common/main.jsp</welcome-file>
     </welcome-file-list>
 
-    <!--<error-page>
-      <exception-type>java.lang.Exception</exception-type>
-      <location>/WEB-INF/error.jsp</location>
-    </error-page>-->
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/WEB-INF/error.jsp</location>
+    </error-page>
 
 </web-app>

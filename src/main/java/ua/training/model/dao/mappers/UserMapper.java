@@ -4,7 +4,6 @@ import ua.training.model.entities.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 public class UserMapper implements ObjectMapper<User>{
 
@@ -21,12 +20,6 @@ public class UserMapper implements ObjectMapper<User>{
         user.setDiscount(rs.getBigDecimal("discount"));
         user.setRole(rs.getLong("role_id"));
         return user;
-    }
-
-    @Override
-    public User makeUnique(Map<Long, User> cache, User user) {
-        cache.putIfAbsent(user.getId(), user);
-        return cache.get(user.getId());
     }
 
 }

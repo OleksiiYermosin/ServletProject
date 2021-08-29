@@ -4,7 +4,6 @@ import ua.training.model.entities.OrderStatus;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 public class OrderStatusMapper implements ObjectMapper<OrderStatus>{
 
@@ -16,9 +15,4 @@ public class OrderStatusMapper implements ObjectMapper<OrderStatus>{
         return orderStatus;
     }
 
-    @Override
-    public OrderStatus makeUnique(Map<Long, OrderStatus> cache, OrderStatus object) {
-        cache.putIfAbsent(object.getId(), object);
-        return cache.get(object.getId());
-    }
 }

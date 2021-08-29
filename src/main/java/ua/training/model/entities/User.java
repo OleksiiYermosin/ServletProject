@@ -25,6 +25,12 @@ public class User {
     public User() {
     }
 
+    public User(Long id, String surname, String username) {
+        this.id = id;
+        this.surname = surname;
+        this.username = username;
+    }
+
     public User(String name, String surname, String username, String phone, String password) {
         this.name = name;
         this.surname = surname;
@@ -118,5 +124,37 @@ public class User {
                 ", password='" + password + '\'' +
                 ", role=" + roleId +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        if (surname != null ? !surname.equals(user.surname) : user.surname != null) return false;
+        if (username != null ? !username.equals(user.username) : user.username != null) return false;
+        if (phone != null ? !phone.equals(user.phone) : user.phone != null) return false;
+        if (balance != null ? !balance.equals(user.balance) : user.balance != null) return false;
+        if (discount != null ? !discount.equals(user.discount) : user.discount != null) return false;
+        if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        return roleId != null ? roleId.equals(user.roleId) : user.roleId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (surname != null ? surname.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        result = 31 * result + (balance != null ? balance.hashCode() : 0);
+        result = 31 * result + (discount != null ? discount.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (roleId != null ? roleId.hashCode() : 0);
+        return result;
     }
 }

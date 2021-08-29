@@ -6,14 +6,6 @@ import java.util.Set;
 
 public class CommandUtility {
 
-    /*public static void setUserRole(HttpServletRequest request,
-                            User.ROLE role, String name) {
-        HttpSession session = request.getSession();
-        ServletContext context = request.getServletContext();
-        context.setAttribute("userName", name);
-        session.setAttribute("role", role);
-    }*/
-
     @SuppressWarnings("unchecked")
     static boolean checkUserIsLogged(HttpServletRequest request, String username){
         Set<String> loggedUsers = (HashSet<String>) request.getServletContext().getAttribute("loggedUsers");

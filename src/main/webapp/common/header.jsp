@@ -10,7 +10,7 @@
 <header class="p-3 bg-dark text-white">
     <div class="container">
         <div style="display: flex; justify-content: space-between">
-            <a href="${pageContext.request.contextPath}/" class="d-flex align-items-center mb-lg-0 text-white text-decoration-none">
+            <a href="${pageContext.request.contextPath}/service/index" class="d-flex align-items-center mb-lg-0 text-white text-decoration-none">
                 <p style="margin: 0; font-size: 24px; color: #ffc107">
                     <fmt:message key="header.service.name" />
                 </p>

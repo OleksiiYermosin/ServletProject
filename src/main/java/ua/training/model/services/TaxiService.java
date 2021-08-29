@@ -24,8 +24,6 @@ public class TaxiService {
     public boolean updateTaxiStatus(Taxi taxiToUpdate, String taxiStatus, boolean checkOnAvailability, Connection connection, boolean close) {
         TaxiDAO taxiDAO = daoFactory.createTaxiDAO(connection);
         Taxi taxi = taxiDAO.findById(taxiToUpdate.getId());
-        System.out.println(taxiToUpdate);
-        System.out.println(taxi);
         if (checkOnAvailability && !taxi.getTaxiStatus().getName().equals("AVAILABLE")) {
             throw new IllegalArgumentException("Taxi is busy");
         }
@@ -89,14 +87,4 @@ public class TaxiService {
         return taxiStatus;
     }
 
-
-    /*public boolean saveTaxi(Taxi taxi) {
-        try {
-            taxiRepository.findByInfo(taxi.getInfo()).orElseThrow(IllegalArgumentException::new);
-            return false;
-        } catch (IllegalArgumentException exception) {
-            taxiRepository.save(taxi);
-        }
-        return true;
-    }*/
 }

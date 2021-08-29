@@ -40,11 +40,8 @@ public class LoginCommand implements Command {
         if (userFromDB.getRole() == 1L) {
             return "redirect:/user";
         } else {
-            //return "redirect:/WEB-INF/admins/admin.jsp";
-            System.out.println("Admin " + userFromDB.getUsername());
+            return "redirect:/admin";
         }
-        return "/common/login.jsp";
-
     }
 
 }

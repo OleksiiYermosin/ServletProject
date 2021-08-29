@@ -5,6 +5,7 @@ import ua.training.model.dao.*;
 import ua.training.model.dao.impl.ConnectionManager;
 import ua.training.model.entities.*;
 import ua.training.model.exceptions.NotEnoughMoneyException;
+import ua.training.model.utils.Page;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -27,10 +28,13 @@ public class OrderService {
 
     private final TaxiService taxiService;
 
-    public OrderService(CalculationService calculationService, UserService userService, TaxiService taxiService) {
+    private final QueryService queryService;
+
+    public OrderService(CalculationService calculationService, UserService userService, TaxiService taxiService, QueryService queryService) {
         this.calculationService = calculationService;
         this.userService = userService;
         this.taxiService = taxiService;
+        this.queryService = queryService;
     }
 
     public Order prepareOrder(String initialAddress, String finishAddress, int capacity, Set<Taxi> taxi, User user) {
@@ -51,29 +55,84 @@ public class OrderService {
         return order;
     }
 
-    public int saveOrder(Order order) {
-        Connection connection = ConnectionManager.getConnection();
+    public int saveOrder(Order order, Connection connection) {
         try {
             connection.setAutoCommit(false);
             OrderDAO orderDAO = daoFactory.createOrderDAO(connection);
             userService.getMoneyFromUser(order.getTotal(), order.getUser().getId(), connection, false);
             order.getTaxi().forEach(t -> taxiService.updateTaxiStatus(t, t.getTaxiStatus().getName(), true,
-                    ConnectionManager.getConnection(), false));
+                    connection, false));
             orderDAO.create(order);
             order.getTaxi().forEach(t -> orderDAO.mapOrderAndTaxi(order.getId(), t.getId()));
-            userService.increaseDiscount(order.getUser().getId(), connection, false);
             connection.commit();
             return ORDER_SAVED;
         } catch (Exception exception) {
             int errorCode = exception.getClass().equals(NotEnoughMoneyException.class) ? NOT_ENOUGH_MONEY : DATA_DEPRECATED;
             try {
                 connection.rollback();
-                System.out.println("RollBack");
             } catch (SQLException sqlException) {
                 //TODO log
             }
             return errorCode;
         }
+    }
+
+    public Page<Order> getPaginatedOrders(User user, Integer limit, Integer page, String sortField,
+                                          String sortDirection, boolean isSearchByDate, String date,
+                                          boolean isSearchByName, String name, String surname,
+                                          Connection connection) {
+        try {
+            connection.setAutoCommit(false);
+            OrderDAO orderDAO = daoFactory.createOrderDAO(connection);
+            TaxiDAO taxiDAO = daoFactory.createTaxiDAO(connection);
+            String userFilterQuery = queryService.prepareUserFilterQuery(user, isSearchByName, name, surname);
+            String dateFilterQuery = queryService.prepareDateFilterQuery(isSearchByDate, date);
+            int recordsAmount = orderDAO.countOrders(userFilterQuery, dateFilterQuery);
+            int offset = limit * page;
+            int pages = recordsAmount / limit + ((recordsAmount % limit == 0) ? 0 : 1);
+            if (page > pages || page < 0) {
+                throw new Exception();
+            }
+            Set<Order> orders = orderDAO.findLimitedSortedOrders(limit, offset, sortField, sortDirection, userFilterQuery, dateFilterQuery);
+            orders.forEach(o -> o.setTaxi(taxiDAO.findByOrderId(o.getId())));
+            connection.commit();
+            return new Page<>(orders, page, 0, pages - 1, sortField, sortDirection, isSearchByDate,
+                    date, isSearchByName, name, surname);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw new RuntimeException();
+        }
+
+    }
+
+    public boolean processOrder(Long orderId, Long userId, Connection connection, boolean delete) {
+        try {
+            connection.setAutoCommit(false);
+            OrderDAO orderDAO = daoFactory.createOrderDAO(connection);
+            TaxiDAO taxiDAO = daoFactory.createTaxiDAO(connection);
+            OrderStatusDAO orderStatusDAO = daoFactory.createOrderStatusDAO(connection);
+            Order order = orderDAO.findById(orderId);
+            order.setTaxi(taxiDAO.findByOrderId(orderId));
+            order.getTaxi().forEach(t -> taxiService.updateTaxiStatus(t, "AVAILABLE", false, connection, false));
+            if (delete) {
+                order.setOrderStatus(orderStatusDAO.findOrderStatusByName("CANCELED").orElseThrow(RuntimeException::new));
+                userService.updateUserBalance(userId, order.getTotal().subtract(BigDecimal.valueOf(INITIAL_PRICE)), connection, false);
+            } else {
+                order.setOrderStatus(orderStatusDAO.findOrderStatusByName("DONE").orElseThrow(RuntimeException::new));
+                userService.increaseDiscount(userId, connection, false);
+            }
+            boolean result = orderDAO.update(order);
+            connection.commit();
+            return result;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException sqlException) {
+                //TODO log
+            }
+        }
+        return false;
     }
 
     private TaxiStatus getTaxiStatus(String name) {
@@ -91,71 +150,4 @@ public class OrderService {
         ConnectionManager.close(connection);
         return orderStatus;
     }
-
-
-/*
-
-    private final OrderStatusRepository orderStatusRepository;
-
-
-    private final TaxiStatusRepository taxiStatusRepository;
-
-    private final TaxiService taxiService;
-
-    private final UserService userService;
-
-    private final CalculationService calculationService;
-
-
-
-    public OrderService(OrderRepository orderRepository, OrderStatusRepository orderStatusRepository, TaxiService taxiService,
-                        UserService userService, TaxiStatusRepository taxiStatusRepository, CalculationService calculationService) {
-        this.orderRepository = orderRepository;
-        this.orderStatusRepository = orderStatusRepository;
-        this.taxiService = taxiService;
-        this.userService = userService;
-        this.taxiStatusRepository = taxiStatusRepository;
-        this.calculationService = calculationService;
-    }
-
-    public Page<Order> getPaginatedOrders(PageInfoDTO pageInfoDTO, Predicate predicate) {
-        logger.info("Getting pages with sort and filter");
-        Pageable pageable = PageRequest.of(pageInfoDTO.getPage(), MyConstants.PAGE_SIZE,
-                pageInfoDTO.getSortDirection().equals("desc") ? Sort.by(pageInfoDTO.getSort()).descending() : Sort.by(pageInfoDTO.getSort()).ascending());
-        return (predicate == null ? orderRepository.findAll(pageable) : orderRepository.findAll(predicate, pageable));
-    }
-
-
-    public Page<Order> getPaginatedOrdersByUser(Integer page, String sort, String sortDirection, User user) {
-        logger.info("Getting sorted pages");
-        Pageable pageable = PageRequest.of(page, MyConstants.PAGE_SIZE,
-                sortDirection.equals("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        return orderRepository.findAllByUser(user, pageable);
-    }
-
-
-
-    public Long processOrder(Long orderId, boolean delete) {
-        Order order = orderRepository.getById(orderId);
-        order.getTaxi().forEach(t -> taxiService.updateTaxiStatus(t, taxiStatusRepository.findByName("AVAILABLE").orElseThrow(StatusNotFoundException::new), false));
-        if (delete) {
-            order.setOrderStatus(orderStatusRepository.findByName("CANCELED").orElseThrow(StatusNotFoundException::new));
-            userService.updateUserBalance(order.getUser().getId(), order.getTotal().subtract(BigDecimal.valueOf(MyConstants.INITIAL_PRICE)));
-        } else {
-            order.setOrderStatus(orderStatusRepository.findByName("DONE").orElseThrow(StatusNotFoundException::new));
-            userService.increaseDiscount(order.getUser().getId());
-        }
-        return orderRepository.save(order).getId();
-    }
-
-
-    public Predicate makePredicate(PageInfoDTO pageInfoDTO) {
-        logger.info("Creating predicate");
-        return FilterPredicate.builder().add(pageInfoDTO.isSearchByName() && !pageInfoDTO.getName().isEmpty() ? pageInfoDTO.getName() : null, QOrder.order.user.name::eq)
-                .add(pageInfoDTO.isSearchByName() && !pageInfoDTO.getSurname().isEmpty() ? pageInfoDTO.getSurname() : null, QOrder.order.user.surname::eq)
-                .add(pageInfoDTO.isSearchByDate() ? LocalDate.parse(pageInfoDTO.getDate()) : null, QOrder.order.date::eq).build();
-    }
-
-*/
-
 }

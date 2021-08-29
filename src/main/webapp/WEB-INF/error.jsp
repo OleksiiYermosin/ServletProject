@@ -27,6 +27,9 @@
                 <c:if test = "${requestScope.isAlreadyLogged != null && requestScope.isAlreadyLogged}">
                     <p class="form-element"><fmt:message key="user.is.already.logged.message"/></p>
                 </c:if>
+                <c:if test = "${requestScope.authError!= null && requestScope.authError}">
+                    <p class="form-element"><fmt:message key="auth.error.message"/></p>
+                </c:if>
             </div>
         </div>
     </div>

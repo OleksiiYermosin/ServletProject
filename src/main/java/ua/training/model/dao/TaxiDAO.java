@@ -13,6 +13,8 @@ public interface TaxiDAO extends GenericDAO<Taxi>{
 
     Integer findCapacitySum();
 
+    Set<Taxi> findByOrderId(Long orderId);
+
     Set<Taxi> findAllTaxiByStatus(String taxiStatus);
 
 }

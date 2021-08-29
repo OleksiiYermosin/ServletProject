@@ -110,6 +110,29 @@ public class JDBCTaxiDAO implements TaxiDAO {
     }
 
     @Override
+    public Set<Taxi> findByOrderId(Long orderId){
+        Set<Taxi> result = new HashSet<>();
+        try(PreparedStatement ps = connection.prepareCall("SELECT taxi.id, taxi.info, taxi.capacity, \n" +
+                "taxi_classes.id AS class_id, taxi_classes.name AS class_name, taxi_classes.multiplier AS class_multiplier,\n" +
+                "taxi_statuses.id AS status_id, taxi_statuses.name AS status_name,\n" +
+                "drivers.id AS driver_id, drivers.name AS driver_name, drivers.surname AS driver_surname, drivers.phone AS driver_phone\n" +
+                "FROM taxi\n" +
+                "JOIN taxi_statuses ON taxi.taxi_status_id=taxi_statuses.id AND taxi.id IN (SELECT taxi_id FROM order_taxi WHERE order_taxi.order_id=?)\n" +
+                "JOIN taxi_classes ON taxi.taxi_class_id=taxi_classes.id\n" +
+                "JOIN drivers ON taxi.driver_id=drivers.id;")){
+            ps.setLong( 1, orderId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                result.add(new EagerTaxiMapper().extractFromResultSet(rs));
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
+        return result;
+    }
+
+    @Override
     public Optional<Taxi> findSuitableCab(String taxiClassString, String taxiStatusString, int capacity) {
         Optional<Taxi> result = Optional.empty();
         try(PreparedStatement ps = connection.prepareCall("SELECT taxi.id, taxi.info, taxi.capacity, \n" +

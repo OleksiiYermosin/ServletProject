@@ -16,17 +16,7 @@
             <a href="${pageContext.request.contextPath}/service/logout">
                 <fmt:message key="change.account.value"/>
             </a>
-            <hr>
-            <a href="${pageContext.request.contextPath}/service/user">
-                <fmt:message key="personal.account.value"/>
-            </a>
-            <a href="${pageContext.request.contextPath}/service/user/order-taxi">
-                <fmt:message key="order.taxi.value"/>
-            </a>
-            <a href="${pageContext.request.contextPath}/service/user/order-taxi/view-new-order">
-                <fmt:message key="prepared.orders.value"/>
-            </a>
-            <a href="${pageContext.request.contextPath}/service/user/orders">
+            <a href="${pageContext.request.contextPath}/service/admin/orders">
                 <fmt:message key="view.orders.value"/>
             </a>
         </div>

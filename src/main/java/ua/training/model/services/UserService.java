@@ -1,7 +1,6 @@
 package ua.training.model.services;
 
 import ua.training.model.dao.DAOFactory;
-import ua.training.model.dao.OrderDAO;
 import ua.training.model.dao.UserDAO;
 import ua.training.model.dao.impl.ConnectionManager;
 import ua.training.model.entities.User;
@@ -9,7 +8,6 @@ import ua.training.model.exceptions.NotEnoughMoneyException;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import static ua.training.model.utils.MyConstants.*;
 
@@ -70,7 +68,7 @@ public class UserService {
         return result;
     }
 
-    public boolean getMoneyFromUser(BigDecimal total, Long id, Connection connection, boolean close) throws SQLException {
+    public boolean getMoneyFromUser(BigDecimal total, Long id, Connection connection, boolean close){
         UserDAO userDAO = daoFactory.createUserDAO(connection);
         User user = userDAO.findById(id);
         if (user.getBalance().compareTo(total) < 0) {

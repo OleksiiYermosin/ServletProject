@@ -4,7 +4,6 @@ import ua.training.model.entities.TaxiClass;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 public class TaxiClassMapper implements ObjectMapper<TaxiClass> {
 
@@ -17,9 +16,4 @@ public class TaxiClassMapper implements ObjectMapper<TaxiClass> {
         return taxiClass;
     }
 
-    @Override
-    public TaxiClass makeUnique(Map<Long, TaxiClass> cache, TaxiClass taxiClass) {
-        cache.putIfAbsent(taxiClass.getId(), taxiClass);
-        return cache.get(taxiClass.getId());
-    }
 }
