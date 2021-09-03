@@ -15,20 +15,14 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-<jsp:include page="../common/header.jsp" />
+<jsp:include page="../common/header.jsp"/>
 <div class="content-holder">
     <div style="width: available" class="content">
         <div class="container">
             <div class="content-container">
                 <p class="form-element"><fmt:message key="error.common.message"/></p>
-                <c:if test = "${requestScope.isAlreadyExist != null && requestScope.isAlreadyExist}">
-                    <p class="form-element"><fmt:message key="username.duplicate.message"/></p>
-                </c:if>
-                <c:if test = "${requestScope.isAlreadyLogged != null && requestScope.isAlreadyLogged}">
-                    <p class="form-element"><fmt:message key="user.is.already.logged.message"/></p>
-                </c:if>
-                <c:if test = "${requestScope.authError!= null && requestScope.authError}">
-                    <p class="form-element"><fmt:message key="auth.error.message"/></p>
+                <c:if test="${pageContext.exception != null && pageContext.exception.message != null}">
+                    <p class="form-element"><fmt:message key="${pageContext.exception.message}"/></p>
                 </c:if>
             </div>
         </div>

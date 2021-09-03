@@ -5,6 +5,7 @@ import ua.training.model.entities.User;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 public class AdminFilter implements Filter {
 
@@ -17,7 +18,7 @@ public class AdminFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         User user = (User) ((HttpServletRequest) servletRequest).getSession().getAttribute("user");
         if (user.getRole() != 2L) {
-            servletRequest.getRequestDispatcher("/WEB-INF/error.jsp").forward(servletRequest, servletResponse);
+            throw new RuntimeException("auth.error.message");
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

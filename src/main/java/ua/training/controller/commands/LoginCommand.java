@@ -33,8 +33,7 @@ public class LoginCommand implements Command {
             return "/common/login.jsp";
         }
         if (CommandUtility.checkUserIsLogged(request, userFromDB.getUsername())) {
-            request.setAttribute("isAlreadyLogged", true);
-            return "/WEB-INF/error.jsp";
+            throw new RuntimeException("user.is.already.logged.message");
         }
         request.getSession().setAttribute("user", userFromDB);
         if (userFromDB.getRole() == 1L) {

@@ -44,8 +44,7 @@ public class RegistrationCommand implements Command {
         if (userService.saveUser(user, ConnectionManager.getConnection(), true)) {
             return "redirect:/service/login";
         }
-        request.setAttribute("isAlreadyExist", true);
-        return "/WEB-INF/error.jsp";
+        throw new RuntimeException("username.duplicate.message");
 
     }
 

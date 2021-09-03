@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="m"  uri="../mytag.tld"%>
 <%@ page isELIgnored="false"%>
 <%@ page session="true" %>
 
@@ -25,8 +26,8 @@
             <div class="content-container">
                 <p>
                     <fmt:message key="welcome.value"/>,
-                     <span style="font-weight: bold">
-                        ${sessionScope.user.name} ${sessionScope.user.surname}
+                    <span style="font-weight: bold">
+                         <m:user name="${sessionScope.user.name}" surname="${sessionScope.user.surname}"/>
                     </span>
                 </p>
                 <p style="margin-bottom: 0">

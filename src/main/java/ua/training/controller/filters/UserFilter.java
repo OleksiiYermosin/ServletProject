@@ -16,7 +16,7 @@ public class UserFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         User user = (User) ((HttpServletRequest) servletRequest).getSession().getAttribute("user");
         if (user.getRole() != 1L) {
-            servletRequest.getRequestDispatcher("/WEB-INF/error.jsp").forward(servletRequest, servletResponse);
+            throw new RuntimeException("auth.error.message");
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
